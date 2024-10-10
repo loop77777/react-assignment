@@ -1,46 +1,32 @@
-# React assignment
+# Shift Booking Application
 
-> Shift booking application
+## Overview
 
-Implement a shift booking application with React and utilize the provided mock API.
-See __[documentation](api/README.md)__ for the API.
+This application allows users to book and cancel shifts. The application has two views: My shifts and Available shifts. My shifts lists all booked shifts, grouped by dates, and allows users to cancel shifts. Available shifts lists all available shifts within cities, grouped by dates, and allows users to book or cancel shifts.
 
-The application must implement the following views according the [design spec](./design-spec.pdf):
+## Instructions to run the app
 
-* __My shifts__
-  * lists all booked shifts
-  * shifts are grouped by dates
-  * shifts can be cancelled
-* __Available shifts__
-  * filter shifts by the city
-  * shifts are grouped by dates
-  * shifts can be booked or cancelled
-
-Relevant assets can be found in [`./assets`](./assets).
-
-Considerations:
-
-* we expect clean and robust state management
-* we do not expect you to use a lot of time for the setup - you may use a starter repo
-* the UI design is a reference and 1:1 implementation is not absolutely necessary
-* creative skills can be used to improve the design
-
-Submission:
-
-* the API is not required to be included in the answer, but can be
-* include instructions how to run the app
-* 3rd party libraries may be used
-
-## Mock API run instructions
-
-Requirements:
-
-* Node.js (recommended v. >=9)
-* NPM v. >=5
+1. Clone the repository
+2. Install dependencies
+3. Start the application
 
 ```bash
+git clone
+cd
 npm install
 npm start
 ```
 
-API server runs at `localhost:8080`
+The application will run at `localhost:3000`.
+
+## Libraries used
+
+- React
+- Material-UI
+- Axios
+
+## API
+
+The API server runs at `localhost:8080`. See the [API documentation](api/README.md) for more information.
+
+## Backend is up and running(updated with the latest changes)
