@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -15,6 +15,20 @@ import AvailableShifts from "./components/AvailableShifts";
 export const API_URL = "http://localhost:8080";
 
 function App() {
+  const [shifts, setShifts] = useState([]);
+
+  // Fetch shifts
+  const fetchShifts = async () => {
+    const response = await fetch(`${API_URL}/shifts`);
+    const data = await response.json();
+    setShifts(data);
+  };
+
+  // Fetch shifts on component mount
+  useEffect(() => {
+    fetchShifts();
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -22,8 +36,11 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Navigate to="/shifts" />} />
-          <Route path="/shifts" element={<Shifts />} />
-          <Route path="/available-shifts" element={<AvailableShifts />} />
+          <Route path="/shifts" element={<Shifts shifts={shifts} />} />
+          <Route
+            path="/available-shifts"
+            element={<AvailableShifts shifts={shifts} />}
+          />
         </Routes>
       </Router>
     </ThemeProvider>
