@@ -3,12 +3,22 @@ import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import { useTheme } from "@mui/material/styles";
-import { Button, List, ListItem, Typography } from "@mui/material";
+import {
+  Button,
+  List,
+  ListItem,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 import axios from "axios";
 import { API_URL } from "../App";
 
 const AvailableShifts = ({ shifts }) => {
   const theme = useTheme();
+  // const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState({});
+  const [updatedShifts, setUpdatedShifts] = useState(shifts);
+  const [selectedCity, setSelectedCity] = useState("");
 
   // Group shifts by city and date
   const groupShiftsByCityAndDate = (shifts) => {
@@ -26,11 +36,14 @@ const AvailableShifts = ({ shifts }) => {
     }, {});
   };
 
-  const groupedShifts = groupShiftsByCityAndDate(shifts);
+  const groupedShifts = groupShiftsByCityAndDate(updatedShifts);
 
   // Set initial selected city to the first city in the groupedShifts object
-  const initialCity = Object.keys(groupedShifts)[0] || "";
-  const [selectedCity, setSelectedCity] = useState(initialCity);
+  useEffect(() => {
+    if (!selectedCity && Object.keys(groupedShifts).length > 0) {
+      setSelectedCity(Object.keys(groupedShifts)[0]);
+    }
+  }, [groupedShifts, selectedCity]);
 
   // Handle tab change
   const handleTabChange = (event, newValue) => {
@@ -53,39 +66,24 @@ const AvailableShifts = ({ shifts }) => {
 
   // Handle booking a shift
   const handleBookShift = async (shiftId) => {
-    // Find the shift to book
-    const shiftToBook = shifts.find((shift) => shift.id === shiftId);
-    console.log(shiftToBook)
-    // Check if the shift is already booked
-
-    if (shiftToBook.booked) {
-      // Cancel the booking
-      try {
+    setButtonLoading((prev) => ({ ...prev, [shiftId]: true }));
+    try {
+      const shiftToBook = updatedShifts.find((shift) => shift.id === shiftId);
+      if (shiftToBook.booked) {
         await axios.post(`${API_URL}/shifts/${shiftId}/cancel`);
-        // shiftToBook.booked = false;
-        console.log("shift cancelled");
-      } catch (error) {
-        console.error("Error cancelling the shift:", error);
-      }
-    } else {
-      // Book the shift
-      try {
+        console.log("Shift cancelled");
+      } else {
         await axios.post(`${API_URL}/shifts/${shiftId}/book`);
-        // shiftToBook.booked = true;
-        console.log("shift booked");
-      } catch (error) {
-        console.error("Error booking the shift:", error);
+        console.log("Shift booked");
       }
+      // Re-fetch shifts from the backend to get the updated state
+      const response = await axios.get(`${API_URL}/shifts`);
+      setUpdatedShifts(response.data);
+    } catch (error) {
+      console.error("Error booking/cancelling the shift:", error);
     }
+    setButtonLoading((prev) => ({ ...prev, [shiftId]: false }));
   };
-
-  useEffect(() => {
-    // Update selected city when shifts data changes
-    if (Object.keys(groupedShifts).length > 0) {
-      setSelectedCity(Object.keys(groupedShifts)[0]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shifts]);
 
   return (
     <div>
@@ -112,52 +110,70 @@ const AvailableShifts = ({ shifts }) => {
         </Tabs>
       </Box>
       <Box sx={{ padding: 2 }}>
-        {selectedCity &&
-          Object.entries(groupedShifts[selectedCity]).map(([date, shifts]) => (
-            <Box key={date}>
-              <Typography
-                sx={{
-                  bgcolor: theme.typography.allVariants.color.medium,
-                  fontWeight: "bold",
-                }}
-              >
-                {date}
-              </Typography>
-              <List>
-                {shifts.map((shift) => (
-                  <ListItem
-                    key={shift.id}
+        {
+          // we can add a loading spinner here later if needed
+          /* {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <CircularProgress color="inherit" />
+          </Box> */
+          selectedCity &&
+            Object.entries(groupedShifts[selectedCity]).map(
+              ([date, shifts]) => (
+                <Box key={date}>
+                  <Typography
                     sx={{
-                      bgcolor: theme.typography.allVariants.color.light,
-                      mb: 1,
+                      bgcolor: theme.typography.allVariants.color.medium,
+                      fontWeight: "bold",
                     }}
                   >
-                    {formatTime(shift.startTime)} - {formatTime(shift.endTime)}
-                    {shift.booked && (
-                      <span style={{ marginRight: "10px" }}>Booked</span>
-                    )}
-                    <Button
-                      onClick={() => handleBookShift(shift.id)}
-                      sx={{
-                        bgcolor: shift.booked
-                          ? theme.typography.allVariants.color.alert
-                          : theme.typography.allVariants.color.success,
-                        ml: "auto",
-                        border: 1,
-                      }}
-                      disabled={isShiftOverlapping(
-                        shift.startTime,
-                        shift.endTime
-                      )}
-                      variant="outlined"
-                    >
-                      {shift.booked ? "Cancel" : "Book"}
-                    </Button>
-                  </ListItem>
-                ))}
-              </List>
-            </Box>
-          ))}
+                    {date}
+                  </Typography>
+                  <List>
+                    {shifts.map((shift) => (
+                      <ListItem
+                        key={shift.id}
+                        sx={{
+                          bgcolor: theme.typography.allVariants.color.light,
+                          mb: 1,
+                        }}
+                      >
+                        {formatTime(shift.startTime)} -{" "}
+                        {formatTime(shift.endTime)}
+                        {shift.booked && (
+                          <span style={{ marginLeft: "auto" }}>Booked</span>
+                        )}
+                        <Button
+                          onClick={() => handleBookShift(shift.id)}
+                          sx={{
+                            bgcolor: shift.booked
+                              ? theme.typography.allVariants.color.alert
+                              : theme.typography.allVariants.color.success,
+                            ml: "auto",
+                            border: 1,
+                          }}
+                          disabled={
+                            isShiftOverlapping(
+                              shift.startTime,
+                              shift.endTime
+                            ) || buttonLoading[shift.id]
+                          }
+                          variant="outlined"
+                        >
+                          {buttonLoading[shift.id] ? (
+                            <CircularProgress size={24} />
+                          ) : shift.booked ? (
+                            "Cancel"
+                          ) : (
+                            "Book"
+                          )}
+                        </Button>
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+              )
+            )
+        }
       </Box>
     </div>
   );
