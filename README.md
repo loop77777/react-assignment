@@ -8,12 +8,16 @@ This application allows users to book and cancel shifts. The application has two
 
 1. Clone the repository
 2. Install dependencies
-3. Start the application
+3. Install the Frontend
+4. Start the application
 
 ```bash
 git clone
-cd
+cd react-assignment
 npm install
+cd client
+npm install
+cd ..
 npm start
 ```
 
