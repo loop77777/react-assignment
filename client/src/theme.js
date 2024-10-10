@@ -27,9 +27,9 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           textTransform: "none",
-          borderRadius: "10px",
-          padding: "10px 20px",
-          fontSize: "16px",
+          borderRadius: "50px",
+          padding: "5px 20px",
+          fontSize: "13px",
           fontWeight: "500",
         },
       },
