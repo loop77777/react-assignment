@@ -1,12 +1,10 @@
-import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import { Link } from "react-router-dom";
+import React from "react";
+import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Header() {
+  const location = useLocation();
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -14,10 +12,18 @@ export default function Header() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 2 }}>
             Shifts App
           </Typography>
-          <Button color="info" component={Link} to="/shifts">
+          <Button
+            color={location.pathname === "/shifts" ? "info" : "inherit"}
+            component={Link}
+            to="/shifts"
+          >
             My shifts
           </Button>
-          <Button color="inherit" component={Link} to="/available-shifts">
+          <Button
+            color={location.pathname === "/available-shifts" ? "info" : "inherit"}
+            component={Link}
+            to="/available-shifts"
+          >
             Available shifts
           </Button>
         </Toolbar>
