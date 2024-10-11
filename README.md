@@ -1,5 +1,8 @@
 # Shift Booking Application
 
+Live url -
+`https://react-assignment-bookee-host-8bpo.vercel.app/shifts`
+
 ## Overview
 
 This application allows users to book and cancel shifts. The application has two views: My shifts and Available shifts. My shifts lists all booked shifts, grouped by dates, and allows users to cancel shifts. Available shifts lists all available shifts within cities, grouped by dates, and allows users to book or cancel shifts.
