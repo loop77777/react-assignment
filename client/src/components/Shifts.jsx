@@ -70,7 +70,7 @@ const Shifts = ({ shifts }) => {
               fontWeight: "bold",
             }}
           >
-            {date}
+            {date} ({shifts.length} shifts)
           </Typography>
           <List>
             {shifts.map((shift) => (
@@ -81,6 +81,7 @@ const Shifts = ({ shifts }) => {
                   mb: 1,
                 }}
               >
+                <Typography mr={3}>{shift.area} -</Typography>
                 {formatTime(shift.startTime)} - {formatTime(shift.endTime)}
                 <span style={{ marginLeft: "auto" }}>Booked</span>
                 <Button
