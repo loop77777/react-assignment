@@ -1,6 +1,6 @@
 # Shift Booking Application
 
-Live url -
+[Live url](<[here](https://react-assignment-bookee-host-8bpo.vercel.app/shifts)>) -
 `https://react-assignment-bookee-host-8bpo.vercel.app/shifts`
 
 ## Overview
